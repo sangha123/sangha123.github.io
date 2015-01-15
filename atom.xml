@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://sangha123.github.io/atom.xml" rel="self"/>
+  <link href="http://sangha123.github.io/"/>
+  <updated>2015-01-14T22:09:24-08:00</updated>
+  <id>http://sangha123.github.io/</id>
+  <author>
+    <name><![CDATA[Sanghamitra Deb]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Installing spark 1.0.0 on Pivotal Hadoop with Yarn client]]></title>
+    <link href="http://sangha123.github.io/blog/2014/07/06/thoughts-from-spark-summit-2014/"/>
+    <updated>2014-07-06T21:52:24-07:00</updated>
+    <id>http://sangha123.github.io/blog/2014/07/06/thoughts-from-spark-summit-2014</id>
+    <content type="html"><![CDATA[<p>In order to install spark on a yarn client it is not necessary to install it on all the worker nodes. In yarn mode the spark shell or pyspark is packaged into the assembly and sent to the executers.</p>
+
+<h2>Creating the Spark Shell.</h2>
+
+<p>In this particular machine I had hadoop-2.0.5_alpha installed. In order to have the correct hadoop &amp; yarn libraries it is important to change provide the correct cluster address for node manager and rescourcemanager in yarn-site.xml and hdfs-site.xml. Then</p>
+
+<p>cd spark/
+cp conf/spark-env.sh.template  conf/spark-env.sh</p>
+
+<p>Now open spark-env.sh in your favorite editor and add
+export YARN_CONF_DIR =&ldquo;path to/yarn-site.xml&rdquo;</p>
+
+<p>Now to make sure that the spark jars are created with the right version of hadoop we need include the SPARK_YARN and SPARK_HADOOP_VERSION variables while building the spark assembly.</p>
+
+<p>SPARK_HADOOP_VERSION=2.0.5_alpha SPARK_YARN=true sbt/sbt clean assembly</p>
+
+<p>This builds the spark-shell. All the jars are saved in ./assembly/target/scala-2.10/</p>
+
+<h2>Running an example</h2>
+
+<p>bin/spark-submit &mdash;class org.apache.spark.examples.SparkPi &mdash;master yarn-client examples/target/scala-2.10/spark-examples-1.0.0-hadoop2.0.5-alpha.jar</p>
+
+<p>You can check if the yarn client is running in the right port in your web browser while the code runs.</p>
+
+<p>The spark-shell is opened using</p>
+
+<p>bin/spark-shell &mdash;master yarn-client</p>
+
+<p>You can regular spark:scala commands here</p>
+
+<h2>Pyspark on Yarn.</h2>
+
+<p>The above process does not load Pyspark on yarn. Pyspark needs to be build with maven and java 6 and not on redhat cluster.</p>
+
+<p>Install Maven using sudo apt-get or pip.
+In the bashrc</p>
+
+<p>export MAVEN_OPTS=&ldquo;-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m&rdquo;
+export PATH=$PATH:/path/to/maven</p>
+
+<p>Next install java 6 compiler (the jar file compiled with java7 is not recognized).</p>
+
+<p>Build Spark jar</p>
+
+<p>cd /path/to/spark
+JAVA_HOME=/path/to/java6_home ./make-distribution.sh &mdash;with-yarn &mdash;hadoop 2.0.5-alpha
+cd assembly/target/scala_2.10</p>
+
+<p>if your system is redhat,
+scp <JAR> <cluster></p>
+
+<p>Place the jar file in the /assembly/target/scala-2.10/ directory.</p>
+
+<p>next from the spark directory in your redhat cluster and launch</p>
+
+<p>bin/pyspark &mdash;master yarn-client</p>
+
+<p>and code away &hellip;</p>
+]]></content>
+  </entry>
+  
+</feed>
