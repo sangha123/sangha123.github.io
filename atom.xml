@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://sangha123.github.io/atom.xml" rel="self"/>
   <link href="http://sangha123.github.io/"/>
-  <updated>2015-01-14T22:09:24-08:00</updated>
+  <updated>2015-01-16T14:55:35-08:00</updated>
   <id>http://sangha123.github.io/</id>
   <author>
     <name><![CDATA[Sanghamitra Deb]]></name>
@@ -12,6 +12,56 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Setting up an IPython Notebook on a Cluster]]></title>
+    <link href="http://sangha123.github.io/blog/2015/01/14/setting-up-an-ipython-notebook-on-a-cluster/"/>
+    <updated>2015-01-14T22:20:04-08:00</updated>
+    <id>http://sangha123.github.io/blog/2015/01/14/setting-up-an-ipython-notebook-on-a-cluster</id>
+    <content type="html"><![CDATA[<h1>Installing ipython notebook on a remote machine.</h1>
+
+<p>IPython notebook is a good interface while working on a cluster remotely. You get the same experience as working on a local machine yet you can use the full power of your remote computer. In order to install ipython notebook you need Python 2.7 or higher. If you are using a red hat linux, python 2.6 is the default system, you will have install Python 2.7 separately.</p>
+
+<p>In this blog post I am assuming regular ipython is installed (pip install ipython[all]).</p>
+
+<p>1) The first step is to create a ipython profile on the server.</p>
+
+<p>$ipython profile create nbserver</p>
+
+<p>[ProfileCreate] Generating default config file: u&#8217;/home/uname/.config/ipython/profile_nbserver/ipython_config.py&#8217;</p>
+
+<p>2) The next step is to create a certificate on the server.
+In order to generate a certificate you need to create a certificate file. I keep my password in the same directory as</p>
+
+<p>$cd home/uname/.config/ipython/profile_nbserver/.
+$openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+This will create a certificate.
+It is not necessary but I usually create a password as well to protect the notebook environment by running this small script.</p>
+
+<h4>/home/uname/.config/ipython/profile_nbserver/mycert.pem</h4>
+
+<p>Copy the location of mycert.pem</p>
+
+<p>$python -c &ldquo;import IPython;print IPython.lib.passwd()&rdquo;
+Enter password:
+Verify password:</p>
+
+<h4>sha1:xxx</h4>
+
+<p>Copy the encrypted password.</p>
+
+<p>Now open ipython_config.py with favorite editor &amp; put the path to mycert.pem &amp; provide the encrypted password.</p>
+
+<p>$emacs -nw ipython_config.py
+c.NotebookApp.certfile = u&#8217;/home/administrator/.config/ipython/profile_nbserver/mycert.pem&#8217;
+c.NotebookApp.certfile = u&#8217;*&lsquo;
+c.NotebookApp.password = sha1:xxx</p>
+
+<p>Put ipython notebook on a fixed port.</p>
+
+<p>c.NotebookApp.port = 9999</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Installing spark 1.0.0 on Pivotal Hadoop with Yarn client]]></title>
